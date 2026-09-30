@@ -99,6 +99,44 @@ button:active { transform: scale(.97); }
 .test-row .detail { color: #5a5348; font-size: 12.5px; word-break: break-all; }
 #btn-prob-continue { margin-top: 14px; width: 100%; background: #2e5d33; border-color: #e8c86a; }
 
+/* ---- 算法战倒计时 ---- */
+.prob-head { flex-wrap: wrap; }
+#prob-timer { margin-left: auto; font-family: "MaShanZheng", serif; font-size: 26px;
+  color: #2e5d33; letter-spacing: .12em; white-space: nowrap; }
+#prob-timer.danger { color: #b71c1c; animation: timer-pulse 1s ease-in-out infinite; }
+@keyframes timer-pulse { 50% { transform: scale(1.12); text-shadow: 0 0 14px rgba(183,28,28,.65); } }
+#xiaoman-avatar { display: none; width: 46px; height: 46px; border-radius: 50%;
+  object-fit: cover; object-position: center 12%; border: 2px solid #c9a86a;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+
+/* ---- 小师妹：战斗旁观立绘 + 提示气泡 ---- */
+#xiaoman { position: absolute; left: 2%; bottom: 3%; height: 56%; z-index: 21;
+  transition: opacity .4s ease; pointer-events: none; }
+#xiaoman.hidden { opacity: 0; }
+#xiaoman-img { height: 100%; width: auto;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,.55)); }
+#xiaoman-bubble { position: absolute; left: 2%; bottom: 62%; width: 300px; max-width: 78vw;
+  z-index: 23; background: #f7f1e0; color: #2a241a;
+  border: 2px solid #c9a86a; border-radius: 10px; padding: 14px 40px 12px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.5); font-size: 15px; line-height: 1.8; }
+#xiaoman-name { font-family: "MaShanZheng", serif; font-size: 17px; color: #7a1f1f;
+  letter-spacing: .2em; margin-bottom: 6px; }
+#xiaoman-text { white-space: pre-wrap; }
+#xiaoman-close { position: absolute; top: 4px; right: 6px; padding: 2px 10px;
+  font-size: 16px; background: none; border: none; color: #8f8570; }
+#xiaoman-close:hover { color: #b71c1c; background: none; box-shadow: none; }
+#btn-hint { background: #4a5d23; border-color: #e8c86a; }
+#btn-hint:disabled { opacity: .45; cursor: default; }
+#btn-hint:disabled:hover { background: #4a5d23; box-shadow: none; }
+
+/* ---- 超时失败 ---- */
+#fail-screen { position: absolute; inset: 0; z-index: 30; background: rgba(8,6,4,.9);
+  display: flex; align-items: center; justify-content: center; }
+.fail-inner { text-align: center; padding: 30px; }
+.fail-title { font-family: "MaShanZheng", serif; font-size: clamp(44px, 8vw, 72px);
+  color: #b71c1c; letter-spacing: .25em; text-shadow: 0 0 30px rgba(183,28,28,.35); }
+.fail-desc { color: #cfc4a5; font-size: 17px; letter-spacing: .1em; margin: 16px 0 28px; }
+
 /* ---- 工具栏 ---- */
 #toolbar { position: absolute; top: 12px; right: 12px; z-index: 15; display: flex; gap: 8px; }
 #toolbar button { font-size: 15px; padding: 7px 14px; letter-spacing: .1em;
@@ -122,4 +160,11 @@ button:active { transform: scale(.97); }
   #sprite { left: 0; bottom: 30%; height: 52%; opacity: .9; }
   #dialogue { left: 3%; right: 3%; bottom: 3%; padding: 40px 18px 26px; }
   .prob-box { padding: 18px; }
+  /* 手机竖屏：计时器缩小不换行溢出；小师妹改小头像+顶部气泡，不挡题面 */
+  #prob-timer { font-size: 20px; }
+  #prob-title { font-size: 24px; }
+  #xiaoman-avatar { display: inline-block; }
+  #xiaoman { display: none; }
+  #xiaoman-bubble { left: 3%; right: 3%; top: 2%; bottom: auto; width: auto; max-width: none;
+    max-height: 34vh; overflow-y: auto; }
 }

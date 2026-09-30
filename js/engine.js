@@ -149,6 +149,121 @@ function pickProblem(node) {
   return pool[plays % pool.length];
 }
 var curProblem = null, curBattle = null;
+
+/* ---------- 算法战倒计时 ---------- */
+/* ★=10分钟 ★★=15分钟 ★★★=20分钟；剩3分钟变红+小师妹担忧；
+ * 超时=挑战失败（可重来，同一道题）；切后台自动暂停。 */
+var BATTLE_MINUTES = { 1: 10, 2: 15, 3: 20 };
+var DANGER_SEC = 180;
+var timerTotal = 0, timerEndAt = 0, timerTickId = null;
+var timerPaused = false, hiddenAt = 0, battleActive = false, dangerOn = false;
+
+function battleMinutes(p) {
+  var m = String((p && p.diff) || "").match(/★/g);
+  var stars = m ? m.length : 1;
+  return BATTLE_MINUTES[stars] || 10;
+}
+function fmtTime(sec) {
+  sec = Math.max(0, Math.ceil(sec));
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return (m < 10 ? "0" + m : "" + m) + ":" + (s < 10 ? "0" + s : "" + s);
+}
+function renderTimer() {
+  if (!battleActive) return;
+  var left = (timerEndAt - Date.now()) / 1000;
+  var el = $("prob-timer");
+  el.textContent = "⏳ " + fmtTime(left);
+  if (left <= DANGER_SEC && !dangerOn) {
+    dangerOn = true;
+    el.classList.add("danger");
+    setXiaoman("worried");
+    toast("小满：师兄，时间不多了！");
+  }
+  if (left <= 0) failBattle();
+}
+function startBattleTimer(p) {
+  stopBattleTimer();
+  timerTotal = battleMinutes(p) * 60;
+  timerEndAt = Date.now() + timerTotal * 1000;
+  dangerOn = false; timerPaused = false; battleActive = true;
+  $("prob-timer").classList.remove("danger");
+  renderTimer();
+  timerTickId = setInterval(renderTimer, 500);
+}
+function stopBattleTimer() {
+  if (timerTickId) { clearInterval(timerTickId); timerTickId = null; }
+  battleActive = false; timerPaused = false;
+}
+function pauseBattleTimer() {
+  if (!battleActive || timerPaused || !timerTickId) return;
+  timerPaused = true; hiddenAt = Date.now();
+  clearInterval(timerTickId); timerTickId = null;
+}
+function resumeBattleTimer() {
+  if (!battleActive || !timerPaused) return;
+  timerEndAt += Date.now() - hiddenAt;
+  timerPaused = false;
+  renderTimer();
+  timerTickId = setInterval(renderTimer, 500);
+}
+function failBattle() {
+  stopBattleTimer();
+  $("fail-screen").classList.remove("hidden");
+}
+function retryBattle() {
+  /* 同一道题重来：curProblem 不变；计时与提示次数重置，代码保留 */
+  $("fail-screen").classList.add("hidden");
+  resetHints();
+  setXiaoman("smile");
+  startBattleTimer(curProblem);
+}
+
+/* ---------- 小师妹：战斗旁观 + 请教提示 ---------- */
+function setXiaoman(emotion) {
+  var def = CHARS["林小满"];
+  var src = (def.expressions && def.expressions[emotion]) || def.sprite;
+  var a = $("xiaoman-img"), b = $("xiaoman-avatar");
+  if (a.getAttribute("src") !== src) a.src = src;
+  if (b.getAttribute("src") !== src) b.src = src;
+}
+function showXiaoman() {
+  setXiaoman("smile");
+  $("xiaoman").classList.remove("hidden");
+  hideBubble();
+}
+function hideXiaoman() {
+  $("xiaoman").classList.add("hidden");
+  hideBubble();
+}
+function showBubble(text) {
+  $("xiaoman-text").textContent = text;
+  $("xiaoman-bubble").classList.remove("hidden");
+}
+function hideBubble() { $("xiaoman-bubble").classList.add("hidden"); }
+
+var hintsLeft = 3, hintLevel = 0;
+function resetHints() {
+  hintsLeft = 3; hintLevel = 0;
+  var b = $("btn-hint");
+  b.disabled = false;
+  b.textContent = "请教师妹（3）";
+  hideBubble();
+}
+function getHints(p) {
+  if (typeof HINTS !== "undefined" && HINTS[p.id]) return HINTS[p.id];
+  if (typeof HINTS_GENERIC !== "undefined" && HINTS_GENERIC[p.theme]) return HINTS_GENERIC[p.theme];
+  return (typeof HINTS_GENERIC !== "undefined" && HINTS_GENERIC["default"]) || ["师兄加油！"];
+}
+function askHint() {
+  if (!curProblem || hintsLeft <= 0) return;
+  var arr = getHints(curProblem);
+  showBubble(arr[Math.min(hintLevel, arr.length - 1)]);
+  hintLevel++; hintsLeft--;
+  var b = $("btn-hint");
+  if (hintsLeft <= 0) { b.disabled = true; b.textContent = "师妹也无计了"; }
+  else b.textContent = "请教师妹（" + hintsLeft + "）";
+}
+
 function renderProblem(node) {
   curBattle = node.battle;
   curProblem = pickProblem(node);
@@ -162,7 +277,11 @@ function renderProblem(node) {
   $("prob-results").innerHTML = "";
   $("prob-loading").classList.add("hidden");
   $("btn-prob-continue").classList.add("hidden");
+  $("fail-screen").classList.add("hidden");
   $("problem-panel").classList.remove("hidden");
+  showXiaoman();
+  resetHints();
+  startBattleTimer(curProblem);
 }
 function resetCode() {
   if (curProblem) $("prob-code").value = curProblem.template;
@@ -178,6 +297,7 @@ function runCode() {
   $("btn-prob-continue").classList.add("hidden");
   PyRunner.runTests(curProblem, code).then(function (results) {
     $("prob-loading").classList.add("hidden");
+    if (!battleActive) return;   /* 超时已判失败：此次运行结果作废 */
     var box = $("prob-results");
     var allOk = true;
     results.forEach(function (r, i) {
@@ -191,6 +311,7 @@ function runCode() {
       box.appendChild(row);
     });
     if (allOk) {
+      stopBattleTimer();   /* 通关：停表 */
       toast("剑气贯通！");
       $("btn-prob-continue").classList.remove("hidden");
     } else {
@@ -231,6 +352,8 @@ function advance() {
   }
 }
 function showEnd() {
+  stopBattleTimer();
+  hideXiaoman();
   $("dialogue").classList.add("hidden");
   $("sprite").classList.add("hidden");
   $("end-screen").classList.remove("hidden");
@@ -239,6 +362,8 @@ function showEnd() {
 
 /* ---------- 标题屏 ---------- */
 function showTitle() {
+  stopBattleTimer();
+  hideXiaoman();
   ["dialogue", "toolbar", "end-screen", "problem-panel"].forEach(function (id) {
     $(id).classList.add("hidden");
   });
@@ -301,7 +426,17 @@ function bind() {
   $("btn-back-title").addEventListener("click", showTitle);
   $("btn-run").addEventListener("click", runCode);
   $("btn-reset-code").addEventListener("click", resetCode);
+  $("btn-hint").addEventListener("click", askHint);
+  $("btn-retry").addEventListener("click", retryBattle);
+  $("xiaoman-close").addEventListener("click", hideBubble);
+  /* 切后台/切标签页：暂停计时，回前台继续 */
+  document.addEventListener("visibilitychange", function () {
+    if ($("problem-panel").classList.contains("hidden")) return;
+    if (document.hidden) pauseBattleTimer(); else resumeBattleTimer();
+  });
   $("btn-prob-continue").addEventListener("click", function () {
+    stopBattleTimer();
+    hideXiaoman();
     $("problem-panel").classList.add("hidden");
     if (curBattle) {
       /* 通关计数+1：下次再打这场战斗，轮换到下一道备选题 */

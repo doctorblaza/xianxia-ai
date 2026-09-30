@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d0b08">
 <title>码修 · 一行代码一道剑气</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 <div id="stage">
@@ -39,17 +39,33 @@
 
   <div id="problem-panel" class="hidden">
     <div class="prob-box">
-      <div class="prob-head"><span id="prob-title"></span><span id="prob-diff"></span></div>
+      <div class="prob-head"><span id="prob-title"></span><span id="prob-diff"></span><img id="xiaoman-avatar" alt="林小满"><span id="prob-timer"></span></div>
       <div id="prob-flavor"></div>
       <div id="prob-desc"></div>
       <textarea id="prob-code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
       <div class="prob-actions">
         <button id="btn-run">运行剑诀</button>
         <button id="btn-reset-code">重置剑诀</button>
+        <button id="btn-hint">请教师妹</button>
       </div>
       <div id="prob-loading" class="hidden">正在引动灵气（加载 Python 环境，首次稍慢）…</div>
       <div id="prob-results"></div>
       <button id="btn-prob-continue" class="hidden">剑成 · 继续前行</button>
+    </div>
+    <!-- 小师妹：战斗旁观 + 提示 -->
+    <div id="xiaoman" class="hidden"><img id="xiaoman-img" alt="林小满"></div>
+    <div id="xiaoman-bubble" class="hidden">
+      <div id="xiaoman-name">林小满</div>
+      <div id="xiaoman-text"></div>
+      <button id="xiaoman-close">×</button>
+    </div>
+    <!-- 超时失败 -->
+    <div id="fail-screen" class="hidden">
+      <div class="fail-inner">
+        <div class="fail-title">剑诀失败</div>
+        <div class="fail-desc">灵气散尽，时辰已到——凝神静气，再试一次吧。</div>
+        <button id="btn-retry">再试一次</button>
+      </div>
     </div>
   </div>
 
@@ -75,7 +91,8 @@
 <script src="js/problems.js"></script>
 <script src="js/story.js"></script>
 <script src="js/emotions.js?v=1"></script>
+<script src="js/hints.js?v=1"></script>
 <script src="js/py.js"></script>
-<script src="js/engine.js"></script>
+<script src="js/engine.js?v=2"></script>
 </body>
 </html>
