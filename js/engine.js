@@ -238,6 +238,7 @@ function failBattle() {
 function retryBattle() {
   /* 同一道题重来：curProblem 不变；计时与提示次数重置，代码保留 */
   $("fail-screen").classList.add("hidden");
+  $("prob-results").innerHTML = "";
   resetHints();
   setXiaoman("smile");
   startBattleTimer(curProblem);
@@ -403,13 +404,24 @@ function showTitle() {
 function refreshContinue() {
   $("btn-continue").classList.toggle("hidden", !loadSave());
 }
+/* 读档时往回找到最近的 scene 节点，恢复背景与 BGM（不重播章节卡） */
+function restoreScene(fromIdx) {
+  for (var i = fromIdx; i >= 0; i--) {
+    var n = STORY[i];
+    if (n && n.t === "scene") {
+      if (n.bg) setBG(n.bg);
+      if (n.bgm !== undefined) setBGM(n.bgm);
+      return;
+    }
+  }
+}
 function startGame(fromSave) {
   $("title-screen").classList.add("hidden");
   $("dialogue").classList.remove("hidden");
   $("toolbar").classList.remove("hidden");
   if (fromSave) {
     var s = loadSave();
-    if (s) { idx = s.idx || 0; }
+    if (s) { idx = s.idx || 0; restoreScene(idx); }
   } else {
     idx = 0;
   }
@@ -438,6 +450,7 @@ function bind() {
     var s = loadSave();
     if (!s) { toast("没有存档"); return; }
     idx = s.idx || 0;
+    restoreScene(idx);
     $("problem-panel").classList.add("hidden");
     renderNode();
     toast("已读档");
