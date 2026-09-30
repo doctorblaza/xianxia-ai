@@ -58,6 +58,31 @@ function setBGM(key) {
   audio.src = url;
   if (bgmOn) { audio.play().catch(function () {}); }
 }
+/* ---------- 剧情 CG：全屏展示，点按/空格继续（无收集/回看） ---------- */
+function renderCg(node) {
+  stopBattleTimer(); hideXiaoman();
+  $("dialogue").classList.add("hidden");
+  $("sprite").classList.add("hidden");
+  var img = $("cg-img");
+  if (img.getAttribute("src") !== node.img) img.src = node.img;
+  $("cg-overlay").classList.remove("hidden");
+}
+function advanceCg() {
+  $("cg-overlay").classList.add("hidden");
+  idx++;
+  if (idx % 5 === 0) saveGame(true);   /* 与台词一致的自动存档节奏 */
+  renderNode();
+}
+function preloadCg() {
+  var done = {};
+  STORY.forEach(function (n) {
+    if (n.t === "cg" && n.img && !done[n.img]) {
+      done[n.img] = true;
+      var im = new Image(); im.src = n.img;
+    }
+  });
+}
+
 function showChapter(text, done) {
   var c = $("chapter");
   $("chapter-text").textContent = text;
@@ -337,6 +362,7 @@ function renderNode() {
     idx++; renderNode(); return;
   }
   if (node.t === "say") { renderSay(node); return; }
+  if (node.t === "cg") { renderCg(node); return; }
   if (node.t === "problem") { renderProblem(node); return; }
   if (node.t === "end") { showEnd(); return; }
   idx++; renderNode();
@@ -350,6 +376,7 @@ function advance() {
     if (idx % 5 === 0) saveGame(true);   /* 每 5 句自动存档 */
     renderNode();
   }
+  if (node.t === "cg") { advanceCg(); return; }
 }
 function showEnd() {
   stopBattleTimer();
@@ -364,7 +391,7 @@ function showEnd() {
 function showTitle() {
   stopBattleTimer();
   hideXiaoman();
-  ["dialogue", "toolbar", "end-screen", "problem-panel"].forEach(function (id) {
+  ["dialogue", "toolbar", "end-screen", "problem-panel", "cg-overlay"].forEach(function (id) {
     $(id).classList.add("hidden");
   });
   $("sprite").classList.add("hidden");
@@ -394,6 +421,7 @@ function startGame(fromSave) {
 /* ---------- 事件 ---------- */
 function bind() {
   $("dialogue").addEventListener("click", advance);
+  $("cg-overlay").addEventListener("click", advanceCg);
   document.addEventListener("keydown", function (e) {
     if (e.code === "Space" || e.code === "Enter") {
       if (!$("problem-panel").classList.contains("hidden")) return;
@@ -461,6 +489,7 @@ function bind() {
 
 bind();
 validateExpressions(); /* 表情差分 404 剔除，回退原立绘 */
+preloadCg();            /* 剧情 CG 预加载，切换无黑闪 */
 $("btn-bgm").textContent = bgmOn ? "音乐:开" : "音乐:关";
 setBG("mage");
 showTitle();

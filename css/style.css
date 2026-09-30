@@ -158,6 +158,14 @@ button:active { transform: scale(.97); }
   background: rgba(20,16,12,.92); border: 1px solid #c9a86a; color: #f2e7c9;
   padding: 12px 30px; font-size: 16px; letter-spacing: .1em; border-radius: 2px; }
 
+/* ---- 剧情 CG：全屏展示，点按继续 ---- */
+#cg-overlay { position: absolute; inset: 0; z-index: 30; background: #000; cursor: pointer; }
+#cg-overlay img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#cg-hint { position: absolute; right: 22px; bottom: 16px; color: rgba(232,200,106,.9);
+  font-size: 14px; letter-spacing: .25em; text-shadow: 0 2px 4px #000;
+  animation: cgBob 1.4s ease-in-out infinite; pointer-events: none; }
+@keyframes cgBob { 0%,100% { transform: translateY(0); opacity: .85; } 50% { transform: translateY(5px); opacity: .5; } }
+
 @media (max-width: 700px) {
   #sprite { left: 0; bottom: 30%; height: 52%; opacity: .9; }
   #dialogue { left: 3%; right: 3%; bottom: 3%; padding: 40px 18px 26px; }

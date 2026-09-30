@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d0b08">
 <title>码修 · 一行代码一道剑气</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 <div id="stage">
@@ -35,6 +35,12 @@
     <div id="speaker"></div>
     <div id="text"></div>
     <div id="next-indicator">▼</div>
+  </div>
+
+  <!-- 剧情 CG：全屏展示，点按任意处继续（无收集/回看） -->
+  <div id="cg-overlay" class="hidden">
+    <img id="cg-img" alt="剧情CG">
+    <div id="cg-hint">点击继续 ▼</div>
   </div>
 
   <div id="problem-panel" class="hidden">
@@ -89,10 +95,10 @@
 <audio id="bgm" loop preload="auto"></audio>
 <script src="js/data.js"></script>
 <script src="js/problems.js"></script>
-<script src="js/story.js"></script>
-<script src="js/emotions.js?v=1"></script>
+<script src="js/story.js?v=1"></script>
+<script src="js/emotions.js?v=2"></script>
 <script src="js/hints.js?v=1"></script>
 <script src="js/py.js"></script>
-<script src="js/engine.js?v=2"></script>
+<script src="js/engine.js?v=3"></script>
 </body>
 </html>
