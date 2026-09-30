@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0b08">
+<title>码修 · 一行代码一道剑气</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="stage">
+  <div id="bg-a" class="bg"></div>
+  <div id="bg-b" class="bg"></div>
+
+  <!-- 人物立绘：说话时出现在 UI 左侧 -->
+  <div id="sprite" class="hidden"><img id="sprite-img" alt=""></div>
+
+  <div id="chapter" class="hidden"><div id="chapter-text"></div></div>
+
+  <div id="title-screen">
+    <div class="title-inner">
+      <div class="title-kicker">仙侠 · 码修</div>
+      <h1>码修</h1>
+      <p class="subtitle">一行代码，一道剑气</p>
+      <div class="menu">
+        <button id="btn-start">开始修炼</button>
+        <button id="btn-continue" class="hidden">继续修炼</button>
+      </div>
+      <p class="hint">点击 / 空格 推进剧情 · 逢题必解，解开方可前行</p>
+    </div>
+  </div>
+
+  <div id="dialogue" class="hidden">
+    <div id="speaker"></div>
+    <div id="text"></div>
+    <div id="next-indicator">▼</div>
+  </div>
+
+  <div id="problem-panel" class="hidden">
+    <div class="prob-box">
+      <div class="prob-head"><span id="prob-title"></span><span id="prob-diff"></span></div>
+      <div id="prob-flavor"></div>
+      <div id="prob-desc"></div>
+      <textarea id="prob-code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="prob-actions">
+        <button id="btn-run">运行剑诀</button>
+        <button id="btn-reset-code">重置剑诀</button>
+      </div>
+      <div id="prob-loading" class="hidden">正在引动灵气（加载 Python 环境，首次稍慢）…</div>
+      <div id="prob-results"></div>
+      <button id="btn-prob-continue" class="hidden">剑成 · 继续前行</button>
+    </div>
+  </div>
+
+  <div id="toolbar" class="hidden">
+    <button id="btn-save">存档</button>
+    <button id="btn-load">读档</button>
+    <button id="btn-bgm">音乐:开</button>
+    <button id="btn-title">标题</button>
+  </div>
+
+  <div id="end-screen" class="hidden">
+    <div class="end-inner">
+      <h2>全剧终</h2>
+      <p>「手搓者，不假外物；生成者，不忘其本。<br>人机共修，大道乃成。」</p>
+      <button id="btn-back-title">返回标题</button>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden" role="status"></div>
+</div>
+<audio id="bgm" loop preload="auto"></audio>
+<script src="js/data.js"></script>
+<script src="js/problems.js"></script>
+<script src="js/story.js"></script>
+<script src="js/py.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>

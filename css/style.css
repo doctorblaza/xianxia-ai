@@ -1,0 +1,125 @@
+/* ============ 《码修》水墨仙侠 UI ============ */
+@font-face {
+  font-family: "MaShanZheng";
+  src: url("../assets/fonts/MaShanZheng-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: #0d0b08; overflow: hidden; }
+body { font-family: "Songti SC", "Noto Serif SC", serif; color: #e8e0cc; }
+
+#stage {
+  position: relative; width: 100vw; height: 100vh; max-width: 1440px; margin: 0 auto;
+  overflow: hidden; background: #0d0b08; user-select: none;
+}
+.hidden { display: none !important; }
+
+/* ---- 背景交叉淡化 ---- */
+.bg { position: absolute; inset: 0; background-size: cover; background-position: center;
+  opacity: 0; transition: opacity 1.2s ease; }
+.bg.show { opacity: 1; }
+
+/* ---- 人物立绘：UI 左侧 ---- */
+#sprite {
+  position: absolute; left: 3%; bottom: 26%; height: 64%; z-index: 5;
+  transition: opacity .5s ease, transform .5s ease; pointer-events: none;
+}
+#sprite.hidden { opacity: 0; transform: translateX(-30px); }
+#sprite-img { height: 100%; width: auto;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,.55)); }
+
+/* ---- 章节卡 ---- */
+#chapter { position: absolute; inset: 0; z-index: 40; background: rgba(8,6,4,.92);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 1; transition: opacity .8s ease; }
+#chapter.hidden { opacity: 0; pointer-events: none; display: flex !important; }
+#chapter-text { font-family: "MaShanZheng", serif; font-size: clamp(34px, 6vw, 64px);
+  color: #e8c86a; letter-spacing: .2em; text-shadow: 0 0 30px rgba(232,200,106,.25); }
+
+/* ---- 标题屏 ---- */
+#title-screen { position: absolute; inset: 0; z-index: 30;
+  background: linear-gradient(rgba(10,8,6,.55), rgba(10,8,6,.78)), url("../assets/bg/bg-mage.webp") center/cover; }
+.title-inner { position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 20px; }
+.title-kicker { font-family: "MaShanZheng", serif; color: #c9a86a; letter-spacing: .5em;
+  font-size: clamp(14px, 2.4vw, 20px); margin-bottom: 12px; }
+#title-screen h1 { font-family: "MaShanZheng", serif; font-size: clamp(72px, 14vw, 150px);
+  color: #f2e7c9; letter-spacing: .18em; text-shadow: 0 4px 40px rgba(0,0,0,.7); }
+.subtitle { font-family: "MaShanZheng", serif; color: #c9a86a; font-size: clamp(18px, 3vw, 26px);
+  letter-spacing: .3em; margin: 10px 0 34px; }
+.menu { display: flex; gap: 16px; }
+button { font-family: "MaShanZheng", serif; font-size: 20px; letter-spacing: .15em;
+  color: #f2e7c9; background: rgba(30,24,16,.85); border: 1px solid #c9a86a;
+  padding: 12px 34px; cursor: pointer; border-radius: 2px; transition: all .25s; }
+button:hover { background: rgba(201,168,106,.25); box-shadow: 0 0 18px rgba(201,168,106,.35); }
+button:active { transform: scale(.97); }
+.hint { margin-top: 26px; color: #8f8570; font-size: 13px; letter-spacing: .1em; }
+
+/* ---- 对话框 ---- */
+#dialogue { position: absolute; left: 4%; right: 4%; bottom: 4%; z-index: 10;
+  min-height: 150px; max-height: 34vh; overflow: hidden;
+  background: linear-gradient(rgba(18,15,11,.90), rgba(18,15,11,.95));
+  border-top: 3px double #c9a86a; border-bottom: 1px solid rgba(201,168,106,.4);
+  padding: 44px 28px 30px; cursor: pointer; }
+#speaker { position: absolute; top: -2px; left: 24px; transform: translateY(-50%);
+  font-family: "MaShanZheng", serif; font-size: 22px; letter-spacing: .2em; color: #1c1710;
+  background: linear-gradient(#e8c86a, #c9a86a); padding: 6px 26px 4px; border-radius: 2px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.5); }
+#speaker:empty { display: none; }
+#text { font-size: clamp(16px, 2.4vw, 21px); line-height: 1.9; color: #efe6cf;
+  white-space: pre-wrap; min-height: 3.4em; }
+#next-indicator { position: absolute; right: 22px; bottom: 12px; color: #c9a86a;
+  animation: bob 1.2s ease-in-out infinite; font-size: 14px; }
+@keyframes bob { 0%,100% { transform: translateY(0); opacity:.6 } 50% { transform: translateY(5px); opacity:1 } }
+
+/* ---- 算法题面板 ---- */
+#problem-panel { position: absolute; inset: 0; z-index: 20; background: rgba(8,6,4,.78);
+  display: flex; align-items: center; justify-content: center; padding: 16px; }
+.prob-box { width: min(860px, 96vw); max-height: 92vh; overflow-y: auto;
+  background: #f2ecdc; color: #2a241a; border: 2px solid #c9a86a; border-radius: 4px;
+  padding: 26px 30px; box-shadow: 0 10px 60px rgba(0,0,0,.7); }
+.prob-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+#prob-title { font-family: "MaShanZheng", serif; font-size: 30px; color: #7a1f1f; }
+#prob-diff { font-size: 13px; color: #8f8570; }
+#prob-flavor { font-family: "MaShanZheng", serif; font-size: 17px; color: #5a4a2e;
+  border-left: 3px solid #c9a86a; padding-left: 12px; margin: 10px 0; line-height: 1.7; }
+#prob-desc { font-size: 15px; line-height: 1.9; white-space: pre-wrap; margin-bottom: 12px; }
+#prob-code { width: 100%; min-height: 230px; font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 14.5px; line-height: 1.65; background: #1c1a16; color: #d8e6c8;
+  border: 1px solid #8a7a55; border-radius: 3px; padding: 14px; resize: vertical; tab-size: 4; }
+.prob-actions { display: flex; gap: 12px; margin: 14px 0; }
+.prob-actions button { font-size: 18px; padding: 9px 26px; color: #f2e7c9; }
+#btn-run { background: #7a1f1f; border-color: #e8c86a; }
+#prob-loading { color: #7a6a45; font-size: 14px; margin: 8px 0; }
+#prob-results { margin: 6px 0; font-size: 14px; }
+.test-row { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px;
+  border-bottom: 1px dashed #c9b98a; font-family: Consolas, monospace; }
+.test-row .ok { color: #2e7d32; font-weight: bold; }
+.test-row .fail { color: #b71c1c; font-weight: bold; }
+.test-row .detail { color: #5a5348; font-size: 12.5px; word-break: break-all; }
+#btn-prob-continue { margin-top: 14px; width: 100%; background: #2e5d33; border-color: #e8c86a; }
+
+/* ---- 工具栏 ---- */
+#toolbar { position: absolute; top: 12px; right: 12px; z-index: 15; display: flex; gap: 8px; }
+#toolbar button { font-size: 15px; padding: 7px 14px; letter-spacing: .1em;
+  background: rgba(20,16,12,.75); }
+
+/* ---- 终幕 ---- */
+#end-screen { position: absolute; inset: 0; z-index: 30; background: rgba(8,6,4,.94);
+  display: flex; align-items: center; justify-content: center; }
+.end-inner { text-align: center; }
+.end-inner h2 { font-family: "MaShanZheng", serif; font-size: clamp(44px, 8vw, 80px);
+  color: #e8c86a; letter-spacing: .25em; margin-bottom: 18px; }
+.end-inner p { color: #cfc4a5; font-size: 18px; letter-spacing: .15em; margin-bottom: 10px; }
+.end-sub { color: #8f8570 !important; font-size: 14px !important; margin-bottom: 30px !important; }
+
+/* ---- toast ---- */
+#toast { position: absolute; top: 18%; left: 50%; transform: translateX(-50%); z-index: 50;
+  background: rgba(20,16,12,.92); border: 1px solid #c9a86a; color: #f2e7c9;
+  padding: 12px 30px; font-size: 16px; letter-spacing: .1em; border-radius: 2px; }
+
+@media (max-width: 700px) {
+  #sprite { left: 0; bottom: 30%; height: 52%; opacity: .9; }
+  #dialogue { left: 3%; right: 3%; bottom: 3%; padding: 40px 18px 26px; }
+  .prob-box { padding: 18px; }
+}

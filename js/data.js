@@ -1,0 +1,61 @@
+/* ============ 《码修》基础数据：人物 / 背景 / BGM ============ */
+"use strict";
+
+/* 人物：说话时立绘出现在 UI 左侧 */
+var CHARS = {
+  "陈砚":   { sprite: "assets/sprites/chenyan.png",     label: "陈砚" },
+  "林小满": { sprite: "assets/sprites/linxiaoman.png",  label: "林小满" },
+  "陈玄机": { sprite: "assets/sprites/chenxuanji.png",   label: "陈玄机 · 家主" },
+  "苏婉":   { sprite: "assets/sprites/suwan.png",       label: "苏婉 · 主母" },
+  "陈玄刚": { sprite: "assets/sprites/elder_gang.png",  label: "大长老 · 陈玄刚" },
+  "陈玄文": { sprite: "assets/sprites/elder_wen.png",   label: "二长老 · 陈玄文" },
+  "陈玄冥": { sprite: "assets/sprites/elder_ming.png",  label: "三长老 · 陈玄冥" },
+  /* 七宗宗主（复仇篇用，序章暂未登场，立绘已就绪） */
+  "Musk":      { sprite: "assets/sprites/musk.png",       label: "Musk 宗主" },
+  "Altman":    { sprite: "assets/sprites/altman.png",     label: "Altman 宗主" },
+  "Zuckerberg":{ sprite: "assets/sprites/zuckerberg.png", label: "Zuckerberg 宗主" },
+  "Pichai":    { sprite: "assets/sprites/pichai.png",     label: "Pichai 宗主" },
+  "张一鸣":    { sprite: "assets/sprites/zhangyiming.png",label: "张一鸣 宗主" },
+  "Dario":     { sprite: "assets/sprites/dario.png",      label: "Dario 宗主" },
+  "Cook":      { sprite: "assets/sprites/cook.png",       label: "Cook 宗主" },
+  "弟子甲":    { sprite: null, label: "弟子甲" },
+  "弟子乙":    { sprite: null, label: "弟子乙" },
+  "旁白":   { sprite: null, label: "" }
+};
+
+/* 水墨背景 */
+var BGS = {
+  "mage":     "assets/bg/bg-mage.webp",      /* 陈氏码阁 · 晨 */
+  "night":    "assets/bg/bg-night.webp",     /* 灭门之夜 */
+  "duanwang": "assets/bg/bg-duanwang.webp",  /* 断网崖 */
+  "xiulian":  "assets/bg/bg-xiulian.webp",  /* 竹林修炼 */
+  "jianshan": "assets/bg/bg-jianshan.webp",  /* xAI 宗 · 倒悬铁剑山 */
+  "danlu":    "assets/bg/bg-danlu.webp",     /* OpenAI 宗 · 通天丹炉 */
+  "shushan":  "assets/bg/bg-shushan.webp",   /* Google 宗 · 书山 */
+  "guangmu":  "assets/bg/bg-guangmu.webp",   /* ByteDance 宗 · 流转光幕 */
+  "yinbai":   "assets/bg/bg-yinbai.webp",    /* Apple 宗 · 银白守御大阵 */
+  "lanwu":    "assets/bg/bg-lanwu.webp"      /* Meta 宗 · 蓝雾幻阵 */
+};
+
+/* 仙剑四 OST BGM：按曲名氛围匹配场景 */
+var BGMS = {
+  /* 標題 / 碼閣日常：仙劍問情 · 抒情溫柔 */
+  "wenqing":  "assets/bgm/bgm-wenqing.mp3",
+  /* 序章滅門夜：肅殺絕劍（神將句芒）· 殺伐肅殺 */
+  "susha":    "assets/bgm/bgm-susha.mp3",
+  /* 第一章斷網崖：回夢遊仙 · 空靈 */
+  "huimeng":  "assets/bgm/bgm-huimeng.mp3",
+  /* 第二章 Musk 快劍對決：浣花洗劍 · 劍氣縱橫 */
+  "huanhua":  "assets/bgm/bgm-huanhua.mp3",
+  /* 第三章 Altman 丹爐對決：焚心以火 · 烈焰煉丹 */
+  "fenxin":   "assets/bgm/bgm-fenxin.mp3",
+  /* 第四章 Pichai 書生劍：仙劍問情 · 溫文 */
+  /* 第五章 張一鳴光幕沉浸：哀幻瞑（幻瞑界）· 迷離幻境 */
+  "aihuan":   "assets/bgm/bgm-aihuan.mp3",
+  /* 第六章 Dario 竹林品茶：蝶戀 · 清雅 */
+  "dielian":  "assets/bgm/bgm-dielian.mp3",
+  /* 第七章 Cook 守御攻堅：危時仗劍 · 仗劍破陣 */
+  "weishi":   "assets/bgm/bgm-weishi.mp3",
+  /* 終章撕下偽裝：浮生長恨（亡悼）· 悲愴收場 */
+  "fusheng":  "assets/bgm/bgm-fusheng.mp3"
+};
