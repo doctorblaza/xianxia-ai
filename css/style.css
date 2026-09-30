@@ -58,10 +58,11 @@ button:active { transform: scale(.97); }
 
 /* ---- 对话框 ---- */
 #dialogue { position: absolute; left: 4%; right: 4%; bottom: 4%; z-index: 10;
-  min-height: 150px; max-height: 34vh; overflow: hidden;
+  min-height: 150px; max-height: 34vh; overflow: visible;
   background: linear-gradient(rgba(18,15,11,.90), rgba(18,15,11,.95));
   border-top: 3px double #c9a86a; border-bottom: 1px solid rgba(201,168,106,.4);
   padding: 44px 28px 30px; cursor: pointer; }
+#text { max-height: calc(34vh - 84px); overflow-y: auto; }
 #speaker { position: absolute; top: -2px; left: 24px; transform: translateY(-50%);
   font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Source Han Sans SC", sans-serif;
   font-weight: 800; font-size: 22px; letter-spacing: .2em; color: #1c1710;
