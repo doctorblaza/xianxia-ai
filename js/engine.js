@@ -68,13 +68,32 @@ function showChapter(text, done) {
   }, 2200);
 }
 
-/* ---------- 立绘（左侧） ---------- */
-function setSprite(who) {
-  var box = $("sprite"), img = $("sprite-img");
+/* ---------- 立绘（左侧）：按情绪取表情差分，缺图回退原立绘 ---------- */
+function spriteFor(who, emotion) {
   var def = CHARS[who];
-  if (!def || !def.sprite) { box.classList.add("hidden"); return; }
-  if (img.getAttribute("src") !== def.sprite) img.src = def.sprite;
+  if (!def || !def.sprite) return null;
+  if (emotion && emotion !== "calm" && def.expressions && def.expressions[emotion])
+    return def.expressions[emotion];
+  return def.sprite;
+}
+function setSprite(who, emotion) {
+  var box = $("sprite"), img = $("sprite-img");
+  var src = spriteFor(who, emotion);
+  if (!src) { box.classList.add("hidden"); return; }
+  if (img.getAttribute("src") !== src) img.src = src;
   box.classList.remove("hidden");
+}
+/* 启动时校验表情差分文件：404 的一律剔除，保证回退到原立绘 */
+function validateExpressions() {
+  Object.keys(CHARS).forEach(function (who) {
+    var ex = CHARS[who].expressions;
+    if (!ex) return;
+    Object.keys(ex).forEach(function (k) {
+      var url = ex[k], probe = new Image();
+      probe.onerror = function () { delete CHARS[who].expressions[k]; };
+      probe.src = url;
+    });
+  });
 }
 
 /* ---------- 打字机 ---------- */
@@ -104,7 +123,9 @@ function renderSay(node) {
   $("dialogue").classList.remove("hidden");
   var def = CHARS[node.who] || CHARS["旁白"];
   $("speaker").textContent = def.label || "";
-  setSprite(node.who);
+  /* EMO: js/emotions.js，按 STORY 数组下标标注的表情；缺省 calm */
+  var emo = (typeof EMO !== "undefined" && EMO[idx]) || "calm";
+  setSprite(node.who, emo);
   typeText(node.text);
 }
 
@@ -304,6 +325,7 @@ function bind() {
 }
 
 bind();
+validateExpressions(); /* 表情差分 404 剔除，回退原立绘 */
 $("btn-bgm").textContent = bgmOn ? "音乐:开" : "音乐:关";
 setBG("mage");
 showTitle();
