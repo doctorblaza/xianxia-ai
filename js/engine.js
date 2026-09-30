@@ -6,9 +6,11 @@ function $(id) { return document.getElementById(id); }
 
 var LS_SAVE = "maxiu_save_v2";
 var LS_BGM  = "maxiu_bgm_on";
+var LS_PLAYS = "maxiu_battle_plays";  /* 各算法战已通关次数（决定备选题轮换） */
 
 var idx = 0;                 /* 当前剧情节点下标 */
-var usedProblems = [];       /* 本轮已出过的题 id（不重复） */
+var battlePlays = {};        /* {战斗名: 已通关次数}，跨存档持久 */
+try { battlePlays = JSON.parse(localStorage.getItem(LS_PLAYS) || "{}") || {}; } catch (e) { battlePlays = {}; }
 var typing = false, typeTimer = null, fullText = "";
 var bgmOn = true;
 var curBgm = null;
@@ -16,7 +18,7 @@ var curBgm = null;
 /* ---------- 存档 ---------- */
 function saveGame(silent) {
   try {
-    localStorage.setItem(LS_SAVE, JSON.stringify({ idx: idx, used: usedProblems }));
+    localStorage.setItem(LS_SAVE, JSON.stringify({ idx: idx }));
     if (!silent) toast("已存档");
   } catch (e) {}
 }
@@ -107,19 +109,28 @@ function renderSay(node) {
 }
 
 /* ---------- 算法题关卡 ---------- */
-/* theme：剧本指定的算法主题（如 graph / dp）；同主题内随机且尽量不重复 */
-function pickProblem(theme) {
-  var pool = PROBLEMS.filter(function (p) { return !theme || p.theme === theme; });
-  if (!pool.length) pool = PROBLEMS.slice();
-  var fresh = pool.filter(function (p) { return usedProblems.indexOf(p.id) < 0; });
-  if (!fresh.length) fresh = pool;
-  var p = fresh[Math.floor(Math.random() * fresh.length)];
-  usedProblems.push(p.id);
-  return p;
+/* 按剧本位置固定出题：战斗名 -> BATTLE_PROBLEMS 备选（同主题同难度），
+ * 按该战斗已通关次数轮换。完全确定性：不随机、不跨难度。 */
+function findProblem(id) {
+  for (var i = 0; i < PROBLEMS.length; i++) if (PROBLEMS[i].id === id) return PROBLEMS[i];
+  return null;
 }
-var curProblem = null;
+function pickProblem(node) {
+  var ids = (typeof BATTLE_PROBLEMS !== "undefined" && BATTLE_PROBLEMS[node.battle]) || [];
+  var pool = [];
+  ids.forEach(function (id) { var p = findProblem(id); if (p) pool.push(p); });
+  if (!pool.length) {
+    /* 兜底：按主题取第一道（理论上不会走到） */
+    pool = PROBLEMS.filter(function (p) { return !node.theme || p.theme === node.theme; });
+  }
+  if (!pool.length) pool = PROBLEMS.slice();
+  var plays = battlePlays[node.battle] || 0;
+  return pool[plays % pool.length];
+}
+var curProblem = null, curBattle = null;
 function renderProblem(node) {
-  curProblem = pickProblem(node.theme);
+  curBattle = node.battle;
+  curProblem = pickProblem(node);
   $("dialogue").classList.add("hidden");
   $("sprite").classList.add("hidden");
   $("prob-title").textContent = "算法战 · " + (node.battle || curProblem.title);
@@ -225,9 +236,9 @@ function startGame(fromSave) {
   $("toolbar").classList.remove("hidden");
   if (fromSave) {
     var s = loadSave();
-    if (s) { idx = s.idx || 0; usedProblems = s.used || []; }
+    if (s) { idx = s.idx || 0; }
   } else {
-    idx = 0; usedProblems = [];
+    idx = 0;
   }
   /* 用户手势后启动 BGM（过 autoplay 限制） */
   if (bgmOn && curBgm) { $("bgm").play().catch(function () {}); }
@@ -252,7 +263,7 @@ function bind() {
   $("btn-load").addEventListener("click", function () {
     var s = loadSave();
     if (!s) { toast("没有存档"); return; }
-    idx = s.idx || 0; usedProblems = s.used || [];
+    idx = s.idx || 0;
     $("problem-panel").classList.add("hidden");
     renderNode();
     toast("已读档");
@@ -271,6 +282,11 @@ function bind() {
   $("btn-reset-code").addEventListener("click", resetCode);
   $("btn-prob-continue").addEventListener("click", function () {
     $("problem-panel").classList.add("hidden");
+    if (curBattle) {
+      /* 通关计数+1：下次再打这场战斗，轮换到下一道备选题 */
+      battlePlays[curBattle] = (battlePlays[curBattle] || 0) + 1;
+      try { localStorage.setItem(LS_PLAYS, JSON.stringify(battlePlays)); } catch (e) {}
+    }
     idx++;
     saveGame(true);
     renderNode();

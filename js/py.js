@@ -51,6 +51,10 @@ var PyRunner = (function () {
       lines.push("    _d = ListNode(); _c = _d");
       lines.push("    for _v in (lst or []): _c.next = ListNode(_v); _c = _c.next");
       lines.push("    return _d.next");
+      lines.push("def _to_ll_arg(a):");
+      lines.push("    if isinstance(a, list) and len(a) > 0 and isinstance(a[0], list):");
+      lines.push("        return [_to_ll(_x) for _x in a]");
+      lines.push("    return _to_ll(a) if isinstance(a, list) else a");
       lines.push("def _to_list(node):");
       lines.push("    if isinstance(node, list): return list(node)");
       lines.push("    _o = []");
@@ -63,7 +67,7 @@ var PyRunner = (function () {
     lines.push("    _exp = _t['expected']");
     lines.push("    try:");
     if (problem.kind === "linkedlist") {
-      lines.push("        _args = [_to_ll(a) if isinstance(a, list) else a for a in _t['args']]");
+      lines.push("        _args = [_to_ll_arg(a) for a in _t['args']]");
       lines.push("        _out = _to_list(" + problem.func + "(*_args))");
     } else {
       lines.push("        _args = _t['args']");
